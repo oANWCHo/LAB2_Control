@@ -57,8 +57,8 @@ double omega_1 = 0;
 double omega_2 = 0;
 
 double R = 28.962;
-double B = 0;
-double J = 0;
+double B = 2.2936*(1/100000);
+double J = 1.0233*(1/100000);
 double L = 0.0243;
 double K_t = 0.124;
 double K_e = 0.056;
@@ -66,9 +66,10 @@ double K_e = 0.056;
 double num;
 double den;
 
-uint16_t ADCRead  = 0;
+float ADC_avg = 0;
+uint16_t ADCRead[10]  = {0};
 uint16_t DACOut = 0;
-uint16_t Vout = 0;
+float Vout = 0;
 //lol
 
 
@@ -128,7 +129,7 @@ int main(void)
   HAL_TIM_Base_Start(&htim2);
 
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, ADCRead, 1);
+  HAL_ADC_Start_DMA(&hadc1, ADCRead, 10);
 
   HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 2048);
   HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
@@ -142,6 +143,14 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	  	  if(__HAL_DMA_GET_COUNTER(hadc1.DMA_Handle)>=1){
+	  		  uint32_t sumadc = 0;
+	  		  for(int i = 0 ; i<9;i++){
+	  			  sumadc += ADCRead[i];
+	  		  }
+	  		  ADC_avg = sumadc/9;
+	  	  }
+
 		  static uint32_t timestamp = 0;
 		  if(timestamp<=__HAL_TIM_GET_COUNTER(&htim2))
 		  {
@@ -149,7 +158,9 @@ int main(void)
 			  timestamp = __HAL_TIM_GET_COUNTER(&htim2) + 1000;
 
 			  //equation
-			  Vin = ADCRead*12/4095;
+
+			  Vin = ADC_avg*3.3/4095;
+			  Vin = Vin*12/3.3;
 
 			  num = (K_t*T*T*Vin)+(((2*J*L)+(J*R*T)+(L*B*T))*omega_1)-(J*L*omega_2);
 			  den = (J*L)+(J*R*T)+(L*B*T)+(R*B*T*T)+(K_t*K_e*T*T);
@@ -158,6 +169,8 @@ int main(void)
 			  Vout = 1.65 + (omega-0)*((2.65-1.65)/(100));
 			  DACOut = Vout*4095/3.3;
 			  HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, DACOut);
+
+			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 			  //re-omega
 			  omega_2 = omega_1;
 			  omega_1 = omega;
@@ -268,7 +281,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -395,7 +408,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 169;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 4.294967295E9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

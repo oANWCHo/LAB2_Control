@@ -1,0 +1,30 @@
+07:29:37 **** Incremental Build of configuration Debug for project LAB2_1 ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32G474xx -c -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:132:29: warning: passing argument 2 of 'HAL_ADC_Start_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  132 |   HAL_ADC_Start_DMA(&hadc1, ADCRead, 10);
+      |                             ^~~~~~~
+      |                             |
+      |                             uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32g4xx_hal_conf.h:228,
+                 from ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc.h:2242:78: note: expected 'uint32_t *' {aka 'long unsigned int *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+ 2242 | HAL_StatusTypeDef       HAL_ADC_Start_DMA(ADC_HandleTypeDef *hadc, uint32_t *pData, uint32_t Length);
+      |                                                                    ~~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "LAB2_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\KMUTT\FIBO\year 2\2\FRA233\FRA233_LAB2_6504_6519_6556_6557\LAB2_Control\LAB2_1\STM32G474RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LAB2_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: LAB2_1.elf
+ 
+arm-none-eabi-size  LAB2_1.elf 
+arm-none-eabi-objdump -h -S LAB2_1.elf  > "LAB2_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  26936	     60	   2120	  29116	   71bc	LAB2_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: LAB2_1.list
+ 
+
+07:29:38 Build Finished. 0 errors, 1 warnings. (took 920ms)
+
