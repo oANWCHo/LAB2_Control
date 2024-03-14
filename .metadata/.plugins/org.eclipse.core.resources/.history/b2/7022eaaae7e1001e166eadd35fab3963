@@ -158,7 +158,7 @@ int main(void)
 			  timestamp = __HAL_TIM_GET_COUNTER(&htim2) + 1000;
 
 			  //equation
-			  Vin = ((ADC_avg*3.3/4095)-1.65)*7.27272;
+			  Vin = (ADC_avg*3.3/4095);
 //			  Vin = ADC_avg*12/4095;
 //			  Vin = Vin*12/3.3;
 
@@ -168,7 +168,6 @@ int main(void)
 
 			  Vout = 1.65 + (omega-0)*((2.65-1.65)/(100));
 			  DACOut = Vout*4095/3.3;
-			  if(DACOut >= 4095)DACOut = 4095;
 			  HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, DACOut);
 
 			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
