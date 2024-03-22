@@ -50,7 +50,7 @@ UART_HandleTypeDef hlpuart1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-double T = 0.001;
+double T = 0.00001;
 double Vin = 0;
 double omega = 0;
 double omega_1 = 0;
@@ -67,7 +67,7 @@ double num;
 double den;
 
 float ADC_avg = 0;
-uint16_t ADCRead[10]  = {0};
+uint16_t ADCRead[21]  = {0};
 uint16_t DACOut = 0;
 float Vout = 0;
 //lol
@@ -80,9 +80,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_LPUART1_UART_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_DAC1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -122,14 +122,14 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_LPUART1_UART_Init();
-  MX_TIM2_Init();
   MX_ADC1_Init();
   MX_DAC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
 
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, ADCRead, 10);
+  HAL_ADC_Start_DMA(&hadc1, ADCRead, 21);
 
   HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 2048);
   HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
@@ -142,20 +142,20 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  	  if(__HAL_DMA_GET_COUNTER(hadc1.DMA_Handle)>=1){
+//
+//	  	  if(__HAL_DMA_GET_COUNTER(hadc1.DMA_Handle)>=1){
 	  		  uint32_t sumadc = 0;
-	  		  for(int i = 0 ; i<9;i++){
+	  		  for(int i = 0 ; i<20;i++){
 	  			  sumadc += ADCRead[i];
 	  		  }
-	  		  ADC_avg = sumadc/9;
-	  	  }
-
+	  		  ADC_avg = sumadc/20;
+//	  	  }
+//	  	  ADC_avg = ADCRead[0];
 		  static uint32_t timestamp = 0;
-		  if(timestamp<=__HAL_TIM_GET_COUNTER(&htim2))
+		  if(timestamp <=__HAL_TIM_GET_COUNTER(&htim2))
 		  {
 			  //re-time
-			  timestamp = __HAL_TIM_GET_COUNTER(&htim2) + 1000;
+			  timestamp = __HAL_TIM_GET_COUNTER(&htim2) + 100;
 
 			  //equation
 			  Vin = ((ADC_avg*3.3/4095)-1.65)*7.27272;
@@ -409,7 +409,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 169;
+  htim2.Init.Prescaler = 170-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 4.294967295E9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
