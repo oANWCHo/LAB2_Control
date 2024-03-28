@@ -4,3 +4,13 @@ omega
 ADC_avg
 DACOut
 ADCRead
+_micros
+currentTime
+c
+Rx
+LSB
+MSB
+velodegree
+QEIReadRaw
+QEIReadRaw
+_micros

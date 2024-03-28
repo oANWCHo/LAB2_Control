@@ -1,0 +1,10 @@
+16:12:16 **** Incremental Build of configuration Debug for project Waijung test ****
+make -j16 all 
+arm-none-eabi-size  Waijung\ test.elf 
+   text	   data	    bss	    dec	    hex	filename
+  31952	     24	   2384	  34360	   8638	Waijung test.elf
+Finished building: default.size.stdout
+ 
+
+16:12:16 Build Finished. 0 errors, 0 warnings. (took 213ms)
+
